@@ -1,0 +1,12 @@
+{
+  "best_model": "Linear SVM",
+  "n_samples": 5171,
+  "test_metrics": {
+    "model": "Linear SVM",
+    "cv_f1": 0.9528,
+    "accuracy": 0.9894,
+    "precision": 0.9839,
+    "recall": 0.9313,
+    "f1": 0.9569
+  }
+}

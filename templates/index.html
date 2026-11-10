@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spam Detector</title>
+<style>
+  body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#f4f6fb;margin:0;display:flex;justify-content:center;padding:40px 16px}
+  .card{background:#fff;max-width:560px;width:100%;padding:28px;border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.08)}
+  h1{margin:0 0 6px;font-size:1.5rem}
+  p.sub{margin:0 0 18px;color:#666}
+  textarea{width:100%;height:130px;padding:12px;border:1px solid #ccd;border-radius:8px;font-size:1rem;box-sizing:border-box;resize:vertical}
+  button{margin-top:12px;background:#3b5bdb;color:#fff;border:0;padding:11px 22px;border-radius:8px;font-size:1rem;cursor:pointer}
+  button:hover{background:#2f4ac0}
+  #result{margin-top:20px;padding:16px;border-radius:10px;display:none;font-size:1.05rem}
+  .spam{background:#ffe3e3;color:#b02a2a}
+  .ham{background:#e3f8e8;color:#1f7a37}
+  .bar{height:8px;background:#0001;border-radius:4px;margin-top:10px}
+  .bar div{height:100%;border-radius:4px;background:currentColor}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Spam Detector</h1>
+  <p class="sub">Paste an SMS or email message to check if it is spam.</p>
+  <textarea id="text" placeholder="e.g. WINNER! You have won $1000. Click http://bit.ly/win-now"></textarea>
+  <button onclick="check()">Check message</button>
+  <div id="result"></div>
+</div>
+<script>
+async function check(){
+  const text=document.getElementById('text').value;
+  const box=document.getElementById('result');
+  const r=await fetch('/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+  const d=await r.json();
+  box.style.display='block';
+  if(d.error){box.className='';box.textContent=d.error;return;}
+  const pct=(d.spam_probability*100).toFixed(1);
+  box.className=d.label;
+  box.innerHTML=(d.label==='spam'?'🚫 This looks like <b>SPAM</b>':'✅ This looks <b>legitimate (ham)</b>')+
+    '<br>Spam probability: '+pct+'%<div class="bar"><div style="width:'+pct+'%"></div></div>';
+}
+</script>
+</body>
+</html>
